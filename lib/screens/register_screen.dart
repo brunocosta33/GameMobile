@@ -1,50 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'home_screen.dart' as home1; // Usar o prefixo aqui também para consistência
+import 'login_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
-  RegisterScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> _register(BuildContext context) async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-    try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('userName', _emailController.text);
-
-      final snackBar = SnackBar(content: Text('Registro bem-sucedido!'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const home1.HomeScreen()), // Use o prefixo aqui também
-      );
-    } on FirebaseAuthException catch (e) {
-      String message;
-      if (e.code == 'weak-password') {
-        message = 'A senha fornecida é muito fraca.';
-      } else if (e.code == 'email-already-in-use') {
-        message = 'Já existe uma conta com esse email.';
-      } else if (e.code == 'invalid-email') {
-        message = 'O email fornecido é inválido.';
-      } else {
-        message = 'Erro ao registrar: $e';
+  Future<void> _register() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+        final snackBar = SnackBar(content: Text('Registro bem-sucedido!'));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      } on FirebaseAuthException catch (e) {
+        String message;
+        if (e.code == 'weak-password') {
+          message = 'A senha fornecida é muito fraca.';
+        } else if (e.code == 'email-already-in-use') {
+          message = 'Já existe uma conta com esse email.';
+        } else if (e.code == 'invalid-email') {
+          message = 'O email fornecido é inválido.';
+        } else {
+          message = 'Erro ao registrar: $e';
+        }
+        final snackBar = SnackBar(content: Text(message));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
-      final snackBar = SnackBar(content: Text(message));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } catch (e) {
-      final snackBar = SnackBar(content: Text('Erro ao registrar: $e'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 
@@ -87,7 +83,7 @@ class RegisterScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () => _register(context),
+                onPressed: _register,
                 child: const Text('Register'),
               ),
             ],
