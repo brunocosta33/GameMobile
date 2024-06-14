@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "803489837296",
+    "project_id": "ipv4game",
+    "storage_bucket": "ipv4game.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:803489837296:android:18e954ee8cc101512c5235",
+        "android_client_info": {
+          "package_name": "com.example.ipv4game"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWrzNlV88uC4-yNRx2ZP3mnEbqJDPX6Y4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
