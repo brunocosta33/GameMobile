@@ -7,12 +7,14 @@ class InputField extends StatelessWidget {
     required this.obscure,
     required this.icon,
     required this.controller,
+    this.validator,
   });
 
   final String hint;
   final bool obscure;
   final IconData icon;
   final TextEditingController controller;
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +51,7 @@ class InputField extends StatelessWidget {
             left: 5,
           ),
         ),
+        validator: validator,
       ),
     );
   }
@@ -66,6 +69,27 @@ class LoginForm extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
 
+  String? _emailValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira seu e-mail';
+    }
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Por favor, insira um e-mail válido';
+    }
+    return null;
+  }
+
+  String? _passwordValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira sua senha';
+    }
+    if (value.length < 6) {
+      return 'A senha deve ter pelo menos 6 caracteres';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -75,16 +99,18 @@ class LoginForm extends StatelessWidget {
         child: Column(
           children: [
             InputField(
-              hint: "Username",
+              hint: "E-mail",
               obscure: false,
-              icon: Icons.person_outline,
+              icon: Icons.email_outlined,
               controller: emailController,
+              validator: _emailValidator,
             ),
             InputField(
-              hint: "Password",
+              hint: "Senha",
               obscure: true,
               icon: Icons.lock_outline,
               controller: passwordController,
+              validator: _passwordValidator,
             ),
           ],
         ),
